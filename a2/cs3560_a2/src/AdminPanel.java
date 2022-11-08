@@ -59,19 +59,20 @@ public class AdminPanel implements ActionListener, TreeSelectionListener {
         this.addUsertextArea = new JTextArea();
         this.addUsertextArea.setBounds(500, 30, 400, 20);
         this.addUsertextArea.setBorder(BorderFactory.createLineBorder(Color.black));
+        // add user button
+        JButton addUserButton = new JButton("Add User");
+        addUserButton.setBounds(500, 60, 400, 20);
+        addUserButton.addActionListener(this);
 
         // text area for adding group
         JLabel addGroupLabel = new JLabel("Add Group");
-        addGroupLabel.setBounds(500, 60, 400, 20);
+        addGroupLabel.setBounds(500, 85, 400, 20);
         addGroupLabel.setFont(font);
         this.addGroupTextArea = new JTextArea();
-        this.addGroupTextArea.setBounds(500, 85, 400, 20);
+        this.addGroupTextArea.setBounds(500, 110, 400, 20);
         this.addGroupTextArea.setBorder(BorderFactory.createLineBorder(Color.black));
 
-        // add user button
-        JButton addUserButton = new JButton("Add User");
-        addUserButton.setBounds(500, 110, 400, 20);
-        addUserButton.addActionListener(this);
+
 
         // add group button
         JButton addGroupButton = new JButton("Add Group");
@@ -80,27 +81,27 @@ public class AdminPanel implements ActionListener, TreeSelectionListener {
 
         // open user view button
         JButton openUserViewButton = new JButton("Open User View");
-        openUserViewButton.setBounds(500, 160, 400, 20);
+        openUserViewButton.setBounds(500, 185, 400, 20);
         openUserViewButton.addActionListener(this);
 
         // show user total button
         JButton showUserTotalButton = new JButton("Show User Total");
-        showUserTotalButton.setBounds(500, 185, 400, 20);
+        showUserTotalButton.setBounds(500, 210, 400, 20);
         showUserTotalButton.addActionListener(this);
 
         // show group total button
         JButton showGroupTotalButton = new JButton("Show Group Total");
-        showGroupTotalButton.setBounds(500, 210, 400, 20);
+        showGroupTotalButton.setBounds(500, 235, 400, 20);
         showGroupTotalButton.addActionListener(this);
 
         // show message total button
         JButton showMessageTotalButton = new JButton("Show Message Total");
-        showMessageTotalButton.setBounds(500, 235, 400, 20);
+        showMessageTotalButton.setBounds(500, 260, 400, 20);
         showMessageTotalButton.addActionListener(this);
 
         // show positive percentage button
         JButton showPositivePercentageButton = new JButton("Show Positive Percentage");
-        showPositivePercentageButton.setBounds(500, 260, 400, 20);
+        showPositivePercentageButton.setBounds(500, 285, 400, 20);
         showPositivePercentageButton.addActionListener(this);
 
         frame.add(treeLabel);
