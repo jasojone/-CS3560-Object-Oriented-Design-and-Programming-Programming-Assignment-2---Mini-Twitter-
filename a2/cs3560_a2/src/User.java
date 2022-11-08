@@ -1,3 +1,4 @@
+//composite class that implements the UserComponent interface
 //user class that extends the user class in the adminUI class 
 // A user has a unique ID; 
 // 2) a list of user IDs that are following this user (followers); 

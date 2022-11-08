@@ -1,3 +1,6 @@
+// a composite class that implements the UserComponent interface
+// can have a list of UserComponents
+
 
 // A user group has an unique ID, which can be used to group users. A user group can
 // contain any number of users. The same user can only be included in one group. Of

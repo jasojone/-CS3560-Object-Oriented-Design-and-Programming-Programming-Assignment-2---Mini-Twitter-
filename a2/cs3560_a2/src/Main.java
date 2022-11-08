@@ -3,7 +3,7 @@
 public class Main {
     public static void main(String[] args) throws Exception {
         
-        AdminUI admin = AdminUI.getInstance();
+        AdminPanel admin = AdminPanel.getInstance();
         admin.createAndShowGUI();
     }
 }
