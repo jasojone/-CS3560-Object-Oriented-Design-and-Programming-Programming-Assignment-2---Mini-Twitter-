@@ -1,0 +1,2 @@
+# -CS3560-Object-Oriented-Design-and-Programming-Programming-Assignment-2---Mini-Twitter-
+In this programming assignment, you will build a Java-based Mini Twitter with graphical user interface (GUI) using Java Swing. This is going to be a pure desktop program, without web or mobile components. The goal of this assignment is to let you experience how to apply design patterns to build extensible software systems.
