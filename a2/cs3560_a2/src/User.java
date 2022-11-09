@@ -63,4 +63,12 @@ public class User extends UserComponent {
     public List<String> getFollowings() {
         return this.followings;
     }
+
+    public char[] getName() {
+        return null;
+    }
+
+    public String toString() {
+        return this.userID;
+    }
 }

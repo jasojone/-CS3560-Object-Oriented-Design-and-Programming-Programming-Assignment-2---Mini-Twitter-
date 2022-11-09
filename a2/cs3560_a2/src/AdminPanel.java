@@ -1,27 +1,38 @@
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Enumeration;
+
 import javax.swing.*;
-import javax.swing.GroupLayout.Group;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.*;
 //this class needs to be a singleton. 
+// To create a singleton class, we must follow the steps, given below:
+
+// 1. Ensure that only one instance of the class exists.
+
+// 2. Provide global access to that instance by
+
+// Declaring all constructors of the class to be private.
+// Providing a static method that returns a reference to the instance. The lazy initialization concept is used to write the static methods.
+// The instance is stored as a private static variable.
+// https://www.geeksforgeeks.org/singleton-class-java/
 
 /* FrameDemo.java requires no other files. */
-public class AdminPanel implements ActionListener, TreeSelectionListener {
+public class AdminPanel implements ActionListener{
     /**
-     * Create the GUI and show it.  For thread safety,
+     * Create the GUI and show it. For thread safety,
      * this method should be invoked from the
      * event-dispatching thread.
      */
-    private  static AdminPanel instance = null;
-    private  JFrame frame;
-    private  JTree tree;
-    private  JScrollPane treeView;
-    private  JTextArea addUsertextArea;
-    private  JTextArea addGroupTextArea;
-    private AdminPanel(){}
+    private static AdminPanel instance = null;
+    private JFrame frame;
+    private JTree treeRoot;
+    private JScrollPane treeView;
+    private JTextArea addUserTextArea;
+    private JTextArea addGroupTextArea;
+
+    private AdminPanel() {
+    }
 
     public static AdminPanel getInstance() {
         if (AdminPanel.instance == null) {
@@ -31,38 +42,41 @@ public class AdminPanel implements ActionListener, TreeSelectionListener {
     }
 
     public void createAndShowGUI() {
-        if (this.frame!= null) {
+        if (this.frame != null) {
             return;
         }
         this.frame = new JFrame("AdminUI");
-        // Group root = new Group("Root");
-        DefaultMutableTreeNode top = new DefaultMutableTreeNode("Root");
+        Group root = new Group("Root");
+        DefaultMutableTreeNode top = new DefaultMutableTreeNode(root);
         // general components
         Font font = new Font("Courier", Font.PLAIN, 12);
 
-        //tree
+        // tree
         JLabel treeLabel = new JLabel("Tree");
         treeLabel.setBounds(30, 5, 400, 20);
-        this.tree = new JTree(top);
-        this.tree.setBounds(30, 30, 450, 500);
-        this.tree.addTreeSelectionListener(this);
-        this.tree.setBorder(BorderFactory.createLineBorder(Color.black));
-        this.treeView = new JScrollPane(this.tree);
+        this.treeRoot = new JTree(top);
+        this.treeRoot.setBounds(30, 30, 450, 500);
+        // this.treeRoot.addTreeSelectionListener(this);
+        this.treeRoot.setFont(font);
+        this.treeRoot.setBorder(BorderFactory.createLineBorder(Color.black));
+        this.treeView = new JScrollPane(this.treeRoot);
         this.treeView.setBounds(30, 30, 450, 500);
         this.treeView.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        // this.treeView.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        this.treeView.setBorder(BorderFactory.createLineBorder(Color.black));
+        
+    
 
         // text area for adding user
         JLabel addUserLabel = new JLabel("Add User");
         addUserLabel.setBounds(500, 5, 400, 20);
         addUserLabel.setFont(font);
-        this.addUsertextArea = new JTextArea();
-        this.addUsertextArea.setBounds(500, 30, 400, 20);
-        this.addUsertextArea.setBorder(BorderFactory.createLineBorder(Color.black));
-        // add user button
+        this.addUserTextArea = new JTextArea();
+        this.addUserTextArea.setBounds(500, 30, 400, 20);
+        this.addUserTextArea.setBorder(BorderFactory.createLineBorder(Color.black));
         JButton addUserButton = new JButton("Add User");
         addUserButton.setBounds(500, 60, 400, 20);
         addUserButton.addActionListener(this);
+        addUserButton.setActionCommand("addUser");
 
         // text area for adding group
         JLabel addGroupLabel = new JLabel("Add Group");
@@ -71,13 +85,10 @@ public class AdminPanel implements ActionListener, TreeSelectionListener {
         this.addGroupTextArea = new JTextArea();
         this.addGroupTextArea.setBounds(500, 110, 400, 20);
         this.addGroupTextArea.setBorder(BorderFactory.createLineBorder(Color.black));
-
-
-
-        // add group button
         JButton addGroupButton = new JButton("Add Group");
         addGroupButton.setBounds(500, 135, 400, 20);
         addGroupButton.addActionListener(this);
+        addGroupButton.setActionCommand("addGroup");
 
         // open user view button
         JButton openUserViewButton = new JButton("Open User View");
@@ -107,7 +118,7 @@ public class AdminPanel implements ActionListener, TreeSelectionListener {
         frame.add(treeLabel);
         frame.add(treeView);
         frame.add(addUserLabel);
-        frame.add(addUsertextArea);
+        frame.add(addUserTextArea);
         frame.add(addGroupLabel);
         frame.add(addGroupTextArea);
         frame.add(addUserButton);
@@ -117,138 +128,103 @@ public class AdminPanel implements ActionListener, TreeSelectionListener {
         frame.add(showGroupTotalButton);
         frame.add(showMessageTotalButton);
         frame.add(showPositivePercentageButton);
-
         frame.setSize(960, 600);
         frame.setLayout(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
         frame.setVisible(true);
-        frame.setVisible(true);
     }
-    // add user and add to the treeView when the button is clicked  
+
+    // when text is entered into the user text area, it will created and add the
+    // user to the tree and the user will be added to the root
     public void addUser() {
-        String userName = this.addUsertextArea.getText();
-        if (userName == null || userName.length() == 0) {
+        String userName = this.addUserTextArea.getText();
+        // change the text area to empty
+        this.addUserTextArea.setText("");
+        if (userName.length() == 0) {
             return;
         }
-        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) this.tree.getLastSelectedPathComponent();
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode) this.treeRoot.getModel().getRoot();
+        DefaultMutableTreeNode user = new DefaultMutableTreeNode(userName);
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) this.treeRoot.getLastSelectedPathComponent();
+        // check to see if the user already exists
+        if (selectedNode != null) {
+            Enumeration children = selectedNode.children();
+            while (children.hasMoreElements()) {
+                DefaultMutableTreeNode child = (DefaultMutableTreeNode) children.nextElement();
+                if (child.getUserObject().equals(userName)) {
+                    return;
+                }
+            }
+        }
+        //check to see if the user is already in the selected group
+        if (selectedNode != null) {
+            if (selectedNode.getUserObject().equals(userName)) {
+                return;
+            }
+        }
+
         if (selectedNode == null) {
-            return;
+            root.add(user);
+        } else {
+            selectedNode.add(user);
         }
-        DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(userName);
-        selectedNode.add(newNode);
-        this.tree.updateUI();
+        this.treeRoot.updateUI();
     }
-    // add group and add to the treeView when the button is clicked
+
     public void addGroup() {
         String groupName = this.addGroupTextArea.getText();
-        if (groupName == null || groupName.length() == 0) {
+        // change the text area to empty
+        this.addGroupTextArea.setText("");
+        if (groupName.length() == 0) {
             return;
         }
-        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) this.tree.getLastSelectedPathComponent();
-        if (selectedNode == null) {
-            return;
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode) this.treeRoot.getModel().getRoot();
+        DefaultMutableTreeNode group = new DefaultMutableTreeNode(groupName);
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) this.treeRoot.getLastSelectedPathComponent();
+        // check to see is the selected node is a user if it is then return
+        if (selectedNode != null) {
+            if (selectedNode.isLeaf()) {
+                return;
+            }
         }
-        DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(groupName);
-        selectedNode.add(newNode);
-        this.tree.updateUI();
-    }
-    // open user view when the button is clicked
-    // public void openUserView() {
-    //     DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) this.tree.getLastSelectedPathComponent();
-    //     if (selectedNode == null) {
-    //         return;
-    //     }
-    //     String userName = selectedNode.getUserObject().toString();
-    //     final UserView UserView = UserView.getInstance();
-    //     UserView.createAndShowGUI(userName);
-    // }
-
-    // // show user total
-    // private void showUserTotal() {
-    //     DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) this.tree.getLastSelectedPathComponent();
-    //     if (selectedNode == null) {
-    //         return;
-    //     }
-    //     int userTotal = 0;
-    //     Enumeration<DefaultMutableTreeNode> children = selectedNode.children();
-    //     while (children.hasMoreElements()) {
-    //         DefaultMutableTreeNode child = children.nextElement();
-    //         if (child.isLeaf()) {
-    //             userTotal++;
-    //         }
-    //     }
-    //     JOptionPane.showMessageDialog(this.frame, "User Total: " + userTotal);
-    // }
-
-    // // show group total
-    // private void showGroupTotal() {
-    //     DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) this.tree.getLastSelectedPathComponent();
-    //     if (selectedNode == null) {
-    //         return;
-    //     }
-    //     int groupTotal = 0;
-    //     Enumeration<DefaultMutableTreeNode> children = selectedNode.children();
-    //     while (children.hasMoreElements()) {
-    //         DefaultMutableTreeNode child = children.nextElement();
-    //         if (!child.isLeaf()) {
-    //             groupTotal++;
-    //         }
-    //     }
-    //     JOptionPane.showMessageDialog(this.frame, "Group Total: " + groupTotal);
-    // }
-
-    // // show message total
-    // private void showMessageTotal() {
-    //     DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) this.tree.getLastSelectedPathComponent();
-    //     if (selectedNode == null) {
-    //         return;
-    //     }
-    //     int messageTotal = 0;
-    //     Enumeration<DefaultMutableTreeNode> children = selectedNode.children();
-    //     while (children.hasMoreElements()) {
-    //         DefaultMutableTreeNode child = children.nextElement();
-    //         if (child.isLeaf()) {
-    //             messageTotal += UserView.getInstance().getMessageTotal((String) child.getUserObject());
-    //         }
-    //     }
-    //     JOptionPane.showMessageDialog(this.frame, "Message Total: " + messageTotal);
-    // }
-
-    // show positive percentage
-    // private void showPositivePercentage() {
-    //     DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) this.tree.getLastSelectedPathComponent();
-    //     if (selectedNode == null) {
-    //         return;
-    //     }
-    //     int positiveTotal = 0;
-    //     int messageTotal = 0;
-    //     Enumeration<DefaultMutableTreeNode> children = selectedNode.children();
-    //     while (children.hasMoreElements()) {
-    //         DefaultMutableTreeNode child = children.nextElement();
-    //         if (child.isLeaf()) {
-    //             positiveTotal += UserView.getInstance().getPositiveTotal((String) child.getUserObject());
-    //             messageTotal += UserView.getInstance().getMessageTotal((String) child.getUserObject());
-    //         }
-    //     }
-    //     if (messageTotal == 0) {
-    //         JOptionPane.showMessageDialog(this.frame, "Positive Percentage: 0%");
-    //     } else {
-    //         JOptionPane.showMessageDialog(this.frame, "Positive Percentage: " + (positiveTotal * 100 / messageTotal) + "%");
-    //     }
-    // }
-
-
-
-    @Override
-    public void valueChanged(TreeSelectionEvent e) {
-        // TODO Auto-generated method stub
+        // check to see if the group already exists
+        if (selectedNode != null) {
+            Enumeration children = selectedNode.children();
+            while (children.hasMoreElements()) {
+                DefaultMutableTreeNode child = (DefaultMutableTreeNode) children.nextElement();
+                if (child.getUserObject().equals(groupName)) {
+                    return;
+                }
+            }
+        }
+        //check to see if the group is already in the root
+        Enumeration children = root.children();
+        while (children.hasMoreElements()) {
+            DefaultMutableTreeNode child = (DefaultMutableTreeNode) children.nextElement();
+            if (child.getUserObject().equals(groupName)) {
+                return;
+            }
+        }
         
+        if (selectedNode == null) {
+            root.add(group);
+        } else {
+            selectedNode.add(group);
+        }
+        this.treeRoot.updateUI();
     }
+
+
 
     @Override
     public void actionPerformed(ActionEvent e) {
         // TODO Auto-generated method stub
-        
+        if (e.getActionCommand().equals("addUser")) {
+            addUser();
+        } else if (e.getActionCommand().equals("addGroup")) {
+            addGroup();
+        }
     }
+
 }

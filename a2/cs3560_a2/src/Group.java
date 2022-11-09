@@ -53,4 +53,12 @@ public class Group extends UserComponent {
     public List<UserComponent> getComponents() {
         return null;
     }
+
+    public char[] getName() {
+        return null;
+    }
+    // add tostring method
+    public String toString() {
+        return groupID;
+    }
 }

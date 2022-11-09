@@ -1,47 +1,47 @@
-// // You can add users/groups with Buttons and TextAreas. Of course, the TreeView should
-// // be updated as well whenever new users/groups are being added.
-// //
-// // The UserView class is used to show the user view. The user view has a text area to
-// // show the user ID, and a button to show the user total. The user total is the number
-// // of users in the user group that the user belongs to. For example, if the user belongs
-// // to the group A, and the group A contains 3 users, then the user total is 3. If the
-// // user belongs to the group B, and the group B contains 2 users, and the group B is
-// // included in the group A, and the group A contains 3 users, then the user total is 5.
-// // When you select a user in the tree, clicking on the Open User View button will open the
-// // User View as shown in Figure 2. You can open multiple User Views for different users.
-// // 8. In the User View, it will display the current users you are following in a ListView
-// // (followings). You can add new users to follow by using the TextArea and Button.
-// // Unfollow is not required. Displaying your followers is not required.
-// // 9. The User View also shows the current news feed list for this user in a ListView.
-// // 10. You can post a new Tweet with the TextArea and Button. Once you click the Post button.
-// // It will add the message to all your followers’ news feed list, as well as your own news
-// // feed list.
-// // 11. Whenever a new message is posted, all the followers’ news feed list view should be
-// // updated and refreshed automatically.
+// You can add users/groups with Buttons and TextAreas. Of course, the TreeView should
+// be updated as well whenever new users/groups are being added.
+//
+// The UserView class is used to show the user view. The user view has a text area to
+// show the user ID, and a button to show the user total. The user total is the number
+// of users in the user group that the user belongs to. For example, if the user belongs
+// to the group A, and the group A contains 3 users, then the user total is 3. If the
+// user belongs to the group B, and the group B contains 2 users, and the group B is
+// included in the group A, and the group A contains 3 users, then the user total is 5.
+// When you select a user in the tree, clicking on the Open User View button will open the
+// User View as shown in Figure 2. You can open multiple User Views for different users.
+// 8. In the User View, it will display the current users you are following in a ListView
+// (followings). You can add new users to follow by using the TextArea and Button.
+// Unfollow is not required. Displaying your followers is not required.
+// 9. The User View also shows the current news feed list for this user in a ListView.
+// 10. You can post a new Tweet with the TextArea and Button. Once you click the Post button.
+// It will add the message to all your followers’ news feed list, as well as your own news
+// feed list.
+// 11. Whenever a new message is posted, all the followers’ news feed list view should be
+// updated and refreshed automatically.
 
-// // The UserView class has the following methods:
-// // 1) a constructor that takes a user ID as a parameter;
-// // 2) a method to show the user total.
+// The UserView class has the following methods:
+// 1) a constructor that takes a user ID as a parameter;
+// 2) a method to show the user total.
 
-// // The UserView class also has the following methods that are inherited from the user
-// // class:
-// // 1) a method to get the ID.
-// // 2) a method to get the list of followers.
-// // 3) a method to get the list of followings.
-// // 4) a method to add a follower.
-// // 5) a method to add a following.
-// // 6) a method to add a message to the news feed.
-// // 7) a method to get the news feed.
-// // 8) a method to get the list of users.
-// // 9) a method to get the list of groups.
-// // 10) a method to get the list of components.
-// // 11) a method to add a user.
-// // 12) a method to add a group.
-// // 13) a method to get the ID.
-// // 14) a method to get the list of users.
-// // 15) a method to get the list of groups.
-// // 16) a method to get the list of components.
-// //
+// The UserView class also has the following methods that are inherited from the user
+// class:
+// 1) a method to get the ID.
+// 2) a method to get the list of followers.
+// 3) a method to get the list of followings.
+// 4) a method to add a follower.
+// 5) a method to add a following.
+// 6) a method to add a message to the news feed.
+// 7) a method to get the news feed.
+// 8) a method to get the list of users.
+// 9) a method to get the list of groups.
+// 10) a method to get the list of components.
+// 11) a method to add a user.
+// 12) a method to add a group.
+// 13) a method to get the ID.
+// 14) a method to get the list of users.
+// 15) a method to get the list of groups.
+// 16) a method to get the list of components.
+//
 
 
 
@@ -145,18 +145,5 @@
 //     public UserView getInstance() {
 //         return null;
 //     }
-//     // create and show the user view UI with 
-//     // 1. user ID text area top left 
-//     // 2. follow user button top right
-//     // 3. list view of users you are following under the follow user button
-//     // 4. list view of your followers under the list view of users you are following
-//     // 5. list view of your news feed under the list view of your followers
-//     // 6. text area to enter a new message under the list view of your news feed
-//     // 7. post button under the text area to enter a new message
-//     // 8. when you click on a user in the list view of users you are following,
-//     //    it will open a new user view for that user
 
-//     // public List<UserComponent> getComponents() {
-//     //     return this.userComponent.getComponents();
-//     // }
 
