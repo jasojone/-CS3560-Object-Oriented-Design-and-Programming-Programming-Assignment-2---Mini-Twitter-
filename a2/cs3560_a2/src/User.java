@@ -36,38 +36,74 @@ public class User extends UserComponent {
         this.newsFeed = new ArrayList<TwitterMessage>();
     }
     
+    
+    /** 
+     * @param followerID
+     */
     public void addFollower(String followerID) {
         this.followers.add(followerID);
     }
     
+    
+    /** 
+     * @param followingID
+     */
     public void addFollowing(String followingID) {
         this.followings.add(followingID);
     }
     
+    
+    /** 
+     * @param message
+     */
     public void addMessage(TwitterMessage message) {
         this.newsFeed.add(message);
     }
     
+    
+    /** 
+     * @return List<TwitterMessage>
+     */
     public List<TwitterMessage> getNewsFeed() {
         return this.newsFeed;
     }
     
+    
+    /** 
+     * @return String
+     */
     public String getID() {
         return this.userID;
     }
     
+    
+    /** 
+     * @return List<String>
+     */
     public List<String> getFollowers() {
         return this.followers;
     }
     
+    
+    /** 
+     * @return List<String>
+     */
     public List<String> getFollowings() {
         return this.followings;
     }
 
+    
+    /** 
+     * @return char[]
+     */
     public char[] getName() {
         return null;
     }
 
+    
+    /** 
+     * @return String
+     */
     public String toString() {
         return this.userID;
     }

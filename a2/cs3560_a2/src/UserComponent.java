@@ -13,38 +13,78 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 
 public class UserComponent extends DefaultMutableTreeNode {
+    
+    /** 
+     * @return String
+     */
     public String getID() {
         return null;
     }
     
+    
+    /** 
+     * @return List<User>
+     */
     public List<User> getUsers() {
         return null;
     }
     
+    
+    /** 
+     * @return List<Group>
+     */
     public List<Group> getGroups() {
         return null;
     }
     
+    
+    /** 
+     * @return List<String>
+     */
     public List<String> getFollowers() {
         return null;
     }
     
+    
+    /** 
+     * @return List<TwitterMessage>
+     */
     public List<TwitterMessage> getNewsFeed() {
         return null;
     }
 
+    
+    /** 
+     * @return List<UserComponent>
+     */
     public List<UserComponent> getComponents() {
         return null;
     }
 
+    
+    /** 
+     * @param followerID
+     */
     public void addFollower(String followerID) {
     }
 
+    
+    /** 
+     * @param message
+     */
     public void addMessage(TwitterMessage message) {
     }
 
+    
+    /** 
+     * @param component
+     */
     public void addComponent(UserComponent component) {
     }
+    
+    /** 
+     * @return String
+     */
     // add tostring method
     public String toString() {
         return null;

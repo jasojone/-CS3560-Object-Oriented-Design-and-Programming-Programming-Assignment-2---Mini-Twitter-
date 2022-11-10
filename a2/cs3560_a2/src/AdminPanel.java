@@ -4,6 +4,8 @@ import java.awt.event.*;
 import java.util.Enumeration;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.*;
 //this class needs to be a singleton. 
 // To create a singleton class, we must follow the steps, given below:
@@ -18,7 +20,7 @@ import javax.swing.tree.*;
 // https://www.geeksforgeeks.org/singleton-class-java/
 
 /* FrameDemo.java requires no other files. */
-public class AdminPanel implements ActionListener {
+public class AdminPanel implements ActionListener, ListSelectionListener {
     /**
      * Create the GUI and show it. For thread safety,
      * this method should be invoked from the
@@ -30,10 +32,23 @@ public class AdminPanel implements ActionListener {
     private JScrollPane treeView;
     private JTextArea addUserTextArea;
     private JTextArea addGroupTextArea;
+    
+    // user panel components
+    private JList followingList;
+    private DefaultListModel followingListModel;
+
+    private JTextArea followUserTextArea;
+    private JTextArea postMessageTextArea;
+    
+ 
 
     private AdminPanel() {
     }
 
+    
+    /** 
+     * @return AdminPanel
+     */
     public static AdminPanel getInstance() {
         if (AdminPanel.instance == null) {
             instance = new AdminPanel();
@@ -41,22 +56,19 @@ public class AdminPanel implements ActionListener {
         return instance;
     }
 
-    public void createAndShowGUI() {
+    public void adminPanelUI() {
         if (this.frame != null) {
             return;
         }
         this.frame = new JFrame("AdminUI");
         Group root = new Group("Root");
         DefaultMutableTreeNode top = new DefaultMutableTreeNode(root);
-        // general components
         Font font = new Font("Courier", Font.PLAIN, 12);
-
         // tree
-        JLabel treeLabel = new JLabel("Tree");
+        JLabel treeLabel = new JLabel("Groups and Users");
         treeLabel.setBounds(30, 5, 400, 20);
         this.treeRoot = new JTree(top);
         this.treeRoot.setBounds(30, 30, 450, 500);
-        // this.treeRoot.addTreeSelectionListener(this);
         this.treeRoot.setFont(font);
         this.treeRoot.setBorder(BorderFactory.createLineBorder(Color.black));
         this.treeView = new JScrollPane(this.treeRoot);
@@ -75,6 +87,12 @@ public class AdminPanel implements ActionListener {
         addUserButton.setBounds(500, 60, 400, 20);
         addUserButton.addActionListener(this);
         addUserButton.setActionCommand("addUser");
+        //add test user
+        User testUser = new User("testUser");
+        root.addUser(testUser);
+        DefaultMutableTreeNode testUserNode = new DefaultMutableTreeNode(testUser);
+        top.add(testUserNode);
+        
 
         // text area for adding group
         JLabel addGroupLabel = new JLabel("Add Group");
@@ -88,14 +106,12 @@ public class AdminPanel implements ActionListener {
         addGroupButton.addActionListener(this);
         addGroupButton.setActionCommand("addGroup");
 
-        //when the user clicks on open user view, the user view should open up in a new window
+        // when the user clicks on open user view, the user view should open up in a new
+        // window
         JButton openUserViewButton = new JButton("Open User View");
         openUserViewButton.setBounds(500, 185, 400, 20);
         openUserViewButton.addActionListener(this);
         openUserViewButton.setActionCommand("generateUserPanel");
-
-
-
 
         // show user total button
         JButton showUserTotalButton = new JButton("Show User Total");
@@ -140,7 +156,7 @@ public class AdminPanel implements ActionListener {
     // when text is entered into the user text area, it will created and add the
     // user to the tree and the user will be added to the root
     public void addUser() {
-        //TODO: put addUser into a separate class and call it here
+        // TODO: put addUser into a separate class and call it here
         String userName = this.addUserTextArea.getText();
         // append the word user to the end of the user name
         userName = userName + " (user)";
@@ -222,6 +238,12 @@ public class AdminPanel implements ActionListener {
         this.treeRoot.updateUI();
     }
 
+    
+    /** 
+     * @description: when the user clicks on the open user view button, the user view
+     * @param e ActionEvent
+     * @return void
+     */
     public void actionPerformed(ActionEvent e) {
         String action = e.getActionCommand();
         if (action.equals("addUser")) {
@@ -229,88 +251,125 @@ public class AdminPanel implements ActionListener {
         } else if (action.equals("addGroup")) {
             this.addGroup();
         } else if (action.equals("generateUserPanel")) {
-            this.generateUserPanel(action);
+            this.UserPanelUI(action);
         }
     }
 
-    // userPanel is the panel that will be displayed when a user is selected in the tree view panel on the left side then generate the user panel
-    // the user panel will have the users name, a button to follow the user, a list of the users followers, 
-    // a list of the users following, a text area to enter a message, a button to post the message, 
+    
+    /** 
+     * @param userName
+     */
+    // userPanel is the panel that will be displayed when a user is selected in the
+    // tree view panel on the left side then generate the user panel
+    // the user panel will have the users name, a button to follow the user, a list
+    // of the users followers,
+    // a list of the users following, a text area to enter a message, a button to
+    // post the message,
     // a list of the users news feed
-    public void generateUserPanel(String userName) {
-        // create the user panel
-        // onen a new frame for the user panel for the user that was selected
+    public void UserPanelUI(String userName) {
         JFrame userFrame = new JFrame("User Panel");
+
         userFrame.setSize(960, 600);
         userFrame.setLayout(null);
-        userFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        userFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         userFrame.setResizable(false);
         userFrame.setVisible(true);
+        // Font font = new Font("Courier", Font.PLAIN, 12);
+        // get the user name from the selected node
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) this.treeRoot.getLastSelectedPathComponent();
+        String selectedNodeName = selectedNode.getUserObject().toString();
 
-
-        
         JPanel userPanel = new JPanel();
         userPanel.setLayout(null);
         userPanel.setBounds(0, 0, 960, 600);
         userPanel.setBackground(Color.WHITE);
 
-        // create the user name label
-        JLabel userNameLabel = new JLabel(userName);
+        // create the user name label at the top left of the user panel
+        JLabel userNameLabel = new JLabel(selectedNodeName);
         userNameLabel.setBounds(10, 10, 200, 20);
+
+        // create the follow label
+        JLabel followUserLabel = new JLabel("Enter a user to follow");
+        followUserLabel.setBounds(30, 35, 200, 20);
+
+        // text area for the user to enter the user they want to follow
+        JTextArea followUserTextArea = new JTextArea();
+        followUserTextArea.setBounds(30, 60, 200, 20);
+        followUserTextArea.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         // create the follow button
         JButton followButton = new JButton("Follow");
-        followButton.setBounds(10, 35, 200, 20);
+        followButton.setBounds(30, 85, 200, 20);
         followButton.addActionListener(this);
         followButton.setActionCommand("follow");
 
         // create the followers label
         JLabel followersLabel = new JLabel("Followers");
-        followersLabel.setBounds(10, 60, 200, 20);
+        followersLabel.setBounds(30, 110, 200, 20);
+        // 
 
-        // create the followers list
-        JList followersList = new JList();
-        followersList.setBounds(10, 85, 200, 200);
+        // // create the followers list
+        // JList followersList = new JList();
+        // followersList.setBounds(10, 85, 200, 200);
 
-        // create the following label
-        JLabel followingLabel = new JLabel("Following");
-        followingLabel.setBounds(10, 290, 200, 20);
+        // // create the following label and list
+        // JLabel followingLabel = new JLabel("Following");
+        // followingLabel.setBounds(30, 135, 200, 20);
 
         // create the following list
-        JList followingList = new JList();
-        followingList.setBounds(10, 315, 200, 200);
+        followingListModel = new DefaultListModel();
+
+        followingListModel.addElement("test");
+        // create the following list and put it in a scroll pane
+        followingList = new JList(followingListModel);
+        followingList.setBounds(30, 135, 200, 200);
+        followingList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        followingList.setSelectedIndex(0);
+        followingList.addListSelectionListener(this);
+        followingList.setVisibleRowCount(5);
+        JScrollPane followingListScrollPane = new JScrollPane(followingList);
+        followingListScrollPane.setBounds(30, 160, 200, 200);
+
+
+
+        Group group = new Group("Following");
+
 
         // create the message label
         JLabel messageLabel = new JLabel("Message");
-        messageLabel.setBounds(220, 10, 200, 20);
+        messageLabel.setBounds(30, 210, 200, 20);
 
-        // create the message text area
+        // create a text box for the message outlined in black
         JTextArea messageTextArea = new JTextArea();
-        messageTextArea.setBounds(220, 35, 200, 200);
+        messageTextArea.setBounds(30, 235, 200, 20);
+        messageTextArea.setBorder(BorderFactory.createLineBorder(Color.black));
 
         // create the post message button
         JButton postMessageButton = new JButton("Post Message");
-        postMessageButton.setBounds(220, 240, 200, 20);
+        postMessageButton.setBounds(30, 260, 200, 20);
         postMessageButton.addActionListener(this);
         postMessageButton.setActionCommand("postMessage");
 
         // create the news feed label
         JLabel newsFeedLabel = new JLabel("News Feed");
-        newsFeedLabel.setBounds(430, 10, 200, 20);
+        newsFeedLabel.setBounds(30, 285, 200, 20);
 
         // create the news feed list
         JList newsFeedList = new JList();
-        newsFeedList.setBounds(430, 35, 200, 200);
+        newsFeedList.setBounds(30, 310, 200, 20);
 
         // add the components to the user frame
         userFrame.add(userPanel);
 
         // add all the components to the user panel
         userPanel.add(userNameLabel);
+        userPanel.add(followUserLabel);
+        userPanel.add(followUserTextArea);
+
         userPanel.add(followButton);
         userPanel.add(followersLabel);
-        userPanel.add(followersList);
-        userPanel.add(followingLabel);
+        // userPanel.add(followersList);
+        // userPanel.add(followingLabel);
         userPanel.add(followingList);
         userPanel.add(messageLabel);
         userPanel.add(messageTextArea);
@@ -318,6 +377,56 @@ public class AdminPanel implements ActionListener {
         userPanel.add(newsFeedLabel);
         userPanel.add(newsFeedList);
 
+
+        // TODO insert an image of a logo at the top right of the user panel
+        // ImageIcon logo = new ImageIcon("logo.png");
+        // JLabel logoLabel = new JLabel(logo);
+        // logoLabel.setBounds(200, 200, 150, 150);
+
+
     }
+
+    // TODO create a method to add a user to the following list
+    // when the follow button is clicked, it will add the user to the following list
+    
+    public void followUser() {
+        // get the user name from the text area
+        String followUser = this.followUserTextArea.getText();
+        // DefaultMutableTreeNode
+        //TODO check if the user exists
+        // if (this.userExists(followUser)) {
+        //     // add the user to the following list
+        //     this.followingList.add(followUser);
+        // } else {
+        //     // display an error message
+        //     JOptionPane.showMessageDialog(null, "User does not exist");
+        // }
+        // add the user to the following list
+        // this.followingList.add(followUser);
+        
+        // this.followingList.add(followUser);
+        // change the text area to empty
+        this.followUserTextArea.setText("");
+    }
+
+
+    @Override
+    public void valueChanged(ListSelectionEvent e) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    // // user exists method to check if the user exists
+    // public boolean userExists(String userName) {
+    //     // get the user name from the text area
+    //     String followUser = this.followUserTextArea.getText();
+    //     // check if the user exists
+    //     if (this.userList.contains(followUser)) {
+    //         return true;
+    //     } else {
+    //         return false;
+    //     }
+    // }
+    
 
 }

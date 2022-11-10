@@ -30,33 +30,65 @@ public class Group extends UserComponent {
         this.groups = new ArrayList<Group>();
     }
     
+    
+    /** 
+     * @param user
+     */
     public void addUser(User user) {
         this.users.add(user);
     }
     
+    
+    /** 
+     * @param group
+     */
     public void addGroup(Group group) {
         this.groups.add(group);
     }
     
+    
+    /** 
+     * @return String
+     */
     public String getID() {
         return this.groupID;
     }
     
+    
+    /** 
+     * @return List<User>
+     */
     public List<User> getUsers() {
         return this.users;
     }
     
+    
+    /** 
+     * @return List<Group>
+     */
     public List<Group> getGroups() {
         return this.groups;
     }
 
+    
+    /** 
+     * @return List<UserComponent>
+     */
     public List<UserComponent> getComponents() {
         return null;
     }
 
+    
+    /** 
+     * @return char[]
+     */
     public char[] getName() {
         return null;
     }
+    
+    /** 
+     * @return String
+     */
     // add tostring method
     public String toString() {
         return groupID;
