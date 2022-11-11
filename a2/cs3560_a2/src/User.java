@@ -27,13 +27,13 @@ public class User extends UserComponent {
     private String userID;
     private List<String> followers;
     private List<String> followings;
-    private List<TwitterMessage> newsFeed;
+    private List<Tweet> newsFeed;
     
     public User(String userID) {
         this.userID = userID;
         this.followers = new ArrayList<String>();
         this.followings = new ArrayList<String>();
-        this.newsFeed = new ArrayList<TwitterMessage>();
+        this.newsFeed = new ArrayList<Tweet>();
     }
     
     
@@ -56,15 +56,15 @@ public class User extends UserComponent {
     /** 
      * @param message
      */
-    public void addMessage(TwitterMessage message) {
+    public void addMessage(Tweet message) {
         this.newsFeed.add(message);
     }
     
     
     /** 
-     * @return List<TwitterMessage>
+     * @return List<Tweet>
      */
-    public List<TwitterMessage> getNewsFeed() {
+    public List<Tweet> getNewsFeed() {
         return this.newsFeed;
     }
     

@@ -2,12 +2,11 @@ import java.util.List;
 // parent class for User and Group classes 
 // The Composite Pattern has four participants:
 
-// Component – Component declares the interface for objects in the composition and for accessing and managing its child components. 
-// It also implements default behavior for the interface common to all classes as appropriate.
-// Leaf – Leaf defines behavior for primitive objects in the composition. It represents leaf objects in the composition.
-// Composite – Composite stores child components and implements child related operations in the component interface.
-// Client – Client manipulates the objects in the composition through the component interface.
-
+//@UserComponent.java
+// 1. Component - declares the interface for objects in the composition and for accessing and managing its child components.
+// 2. Leaf - represents leaf objects in the composition. A leaf has no children.
+// 3. Composite - defines behavior for components having children. Stores child components.
+// 4. Client - manipulates the objects in the composition through the Component interface.
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
@@ -16,6 +15,8 @@ public class UserComponent extends DefaultMutableTreeNode {
     
     /** 
      * @return String
+     * {@summary} returns the ID of the user or group
+     * 
      */
     public String getID() {
         return null;
@@ -47,9 +48,9 @@ public class UserComponent extends DefaultMutableTreeNode {
     
     
     /** 
-     * @return List<TwitterMessage>
+     * @return List<Tweet>
      */
-    public List<TwitterMessage> getNewsFeed() {
+    public List<Tweet> getNewsFeed() {
         return null;
     }
 
@@ -72,7 +73,7 @@ public class UserComponent extends DefaultMutableTreeNode {
     /** 
      * @param message
      */
-    public void addMessage(TwitterMessage message) {
+    public void addMessage(Tweet message) {
     }
 
     
