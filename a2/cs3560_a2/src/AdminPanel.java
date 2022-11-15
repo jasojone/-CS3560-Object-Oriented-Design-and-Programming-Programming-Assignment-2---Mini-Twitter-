@@ -98,6 +98,18 @@ public class AdminPanel implements ActionListener, ListSelectionListener {
         DefaultMutableTreeNode testUserNode = new DefaultMutableTreeNode(testUser);
         top.add(testUserNode);
 
+        // create subject for the test user
+        Subject testSubject = new Subject();
+        testUser.setUserObject(testSubject);
+
+        //create observer for the test user
+        Observer testObserver = new Observer(testUser);
+        testSubject.addObserver(testObserver);
+
+
+
+
+
         // text area for adding group
         JLabel addGroupLabel = new JLabel("Add Group");
         addGroupLabel.setBounds(500, 85, 400, 20);

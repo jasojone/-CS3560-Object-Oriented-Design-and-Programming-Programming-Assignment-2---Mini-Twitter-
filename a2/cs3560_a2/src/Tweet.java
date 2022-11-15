@@ -1,20 +1,14 @@
 // 
 
 public class Tweet implements Message {
-    private String id;
     private String tweet;
     private String timestamp;
     private String author;
     
-    public Tweet(String id, String tweet, String timestamp, String author) {
-        this.id = id;
+    public Tweet(String tweet, String timestamp, String author) {
         this.tweet = tweet;
         this.timestamp = timestamp;
         this.author = author;
-    }
-    
-    public String getID() {
-        return id;
     }
     
     public String getTweet() {
@@ -29,9 +23,6 @@ public class Tweet implements Message {
         return author;
     }
     
-    public void setID(String id) {
-        this.id = id;
-    }
     
     public void setTweet(String tweet) {
         this.tweet = tweet;
