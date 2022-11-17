@@ -1,110 +1,87 @@
-//composite class that implements the UserComponent interface
-//user class that extends the user class in the adminUI class 
-// A user has a unique ID; 
-// 2) a list of user IDs that are following this user (followers); 
-// 3) a list of user IDs being followed by this user (followings); 
-// 4) a news feed list containing a list of Twitter messages.
-//
-// The user class has the following methods:
-// 1) a constructor that takes a user ID as a parameter;
-// 2) a method to add a follower;
-// 3) a method to add a following;
-// 4) a method to add a message to the news feed;
-// 5) a method to get the news feed.
-//
-// The user class also has the following methods that are inherited from the user class:
-// 1) a method to get the ID;
-// 2) a method to get the list of followers;
-// 3) a method to get the list of followings.
-//
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class User extends UserComponent {
-    
-    private String userID;
-    private List<String> followers;
-    private List<String> followings;
+public class User extends SysEntry implements Observer {
+    private List<SysEntry> followers;
+    private List<SysEntry> followings;
     private List<Tweet> newsFeed;
-    
+
     public User(String userID) {
-        this.userID = userID;
-        this.followers = new ArrayList<String>();
-        this.followings = new ArrayList<String>();
+        super(userID);
+        this.followers = new ArrayList<SysEntry>();
+        this.followings = new ArrayList<SysEntry>();
         this.newsFeed = new ArrayList<Tweet>();
     }
-    
-    
+
     /** 
      * @param followerID
      */
-    public void addFollower(String followerID) {
+    public void addFollower(SysEntry followerID) {
         this.followers.add(followerID);
     }
-    
-    
+
     /** 
      * @param followingID
      */
-    public void addFollowing(String followingID) {
+    public void addFollowing(SysEntry followingID) {
         this.followings.add(followingID);
     }
-    
-    
+
     /** 
-     * @param message
+     * @param tweet
      */
-    public void addMessage(Tweet message) {
-        this.newsFeed.add(message);
+    public void addTweet(Tweet tweet) {
+        this.newsFeed.add(tweet);
     }
-    
-    
+
     /** 
      * @return List<Tweet>
      */
     public List<Tweet> getNewsFeed() {
         return this.newsFeed;
     }
-    
-    
-    /** 
-     * @return String
-     */
-    public String getID() {
-        return this.userID;
-    }
-    
-    
+
     /** 
      * @return List<String>
      */
-    public List<String> getFollowers() {
+    public List<SysEntry> getFollowers() {
         return this.followers;
     }
-    
-    
+
     /** 
      * @return List<String>
      */
-    public List<String> getFollowings() {
+    public List<SysEntry> getFollowings() {
         return this.followings;
     }
 
-    
-    /** 
-     * @return char[]
-     */
-    public char[] getName() {
-        return null;
+    @Override
+    public void accept(Visitor visitor) {
+        // TODO Auto-generated method stub
+        
     }
 
-    
-    /** 
-     * @return String
-     */
-    public String toString() {
-        return this.userID;
+    public boolean containsUser(String userName) {
+        return false;
     }
+
+    @Override
+    public void update(String event) {
+        
+    }
+    // a method to see if the user exists in the list of users
+    // public boolean containsUser(List<User> users, String userName) {
+    //     for (User user : users) {
+    //         if (user.getID().equals(userName)) {
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
+
+
 }
+    
+    

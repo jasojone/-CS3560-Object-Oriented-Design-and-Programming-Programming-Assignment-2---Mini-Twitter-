@@ -7,6 +7,7 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.*;
+
 //this class needs to be a singleton. 
 // To create a singleton class, we must follow the steps, given below:
 
@@ -44,7 +45,6 @@ public class AdminPanel implements ActionListener, ListSelectionListener {
     private JTextField followers;
     private JTextField followings;
     private JTextField newsFeed;
-
     private JTextArea followUserTextArea;
     private JTextArea postMessageTextArea;
 
@@ -67,12 +67,12 @@ public class AdminPanel implements ActionListener, ListSelectionListener {
         }
         this.frame = new JFrame("AdminUI");
         Group root = new Group("Root");
-        DefaultMutableTreeNode top = new DefaultMutableTreeNode(root);
+       
         Font font = new Font("Courier", Font.PLAIN, 12);
         // tree
         JLabel treeLabel = new JLabel("Groups and Users");
         treeLabel.setBounds(30, 5, 400, 20);
-        this.treeRoot = new JTree(top);
+        this.treeRoot = new JTree(root);
         this.treeRoot.setBounds(30, 30, 450, 500);
         this.treeRoot.setFont(font);
         this.treeRoot.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -80,6 +80,11 @@ public class AdminPanel implements ActionListener, ListSelectionListener {
         this.treeView.setBounds(30, 30, 450, 500);
         this.treeView.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         this.treeView.setBorder(BorderFactory.createLineBorder(Color.black));
+        this.treeRoot.setShowsRootHandles(true);
+    
+
+
+
 
         // text area for adding user
         JLabel addUserLabel = new JLabel("Add User");
@@ -96,7 +101,7 @@ public class AdminPanel implements ActionListener, ListSelectionListener {
         User testUser = new User("testUser");
         root.addUser(testUser);
         DefaultMutableTreeNode testUserNode = new DefaultMutableTreeNode(testUser);
-        top.add(testUserNode);
+        root.add(testUserNode);
 
         // text area for adding group
         JLabel addGroupLabel = new JLabel("Add Group");
@@ -157,89 +162,135 @@ public class AdminPanel implements ActionListener, ListSelectionListener {
         frame.setVisible(true);
     }
 
-    // when text is entered into the user text area, it will created and add the
-    // user to the tree and the user will be added to the root
-    public void addUser() {
-        // TODO: put addUser into a separate class and call it here
+    public void addUser(){
         String userName = this.addUserTextArea.getText();
-        // append the word user to the end of the user name
-        userName = userName + " (user)";
-        if (userName.length() == 0) {
+       // check for empty string input
+        if (userName == null || userName.equals("")) {
+            JOptionPane.showMessageDialog(this.frame, "Please enter a user name");
             return;
         }
+        //  check to see if user already exists in the list
+        
         DefaultMutableTreeNode root = (DefaultMutableTreeNode) this.treeRoot.getModel().getRoot();
-        DefaultMutableTreeNode user = new DefaultMutableTreeNode(userName);
+        // Enumeration<TreeNode> children = root.depthFirstEnumeration();
+        // while (children.hasMoreElements()) {
+        //     DefaultMutableTreeNode child = (DefaultMutableTreeNode) children.nextElement();
+        //     if (child.getUserObject() instanceof User) {
+        //         User user = (User) child.getUserObject();
+        //         if (user.containsUser(null, userName)) {
+        //             JOptionPane.showMessageDialog(this.frame, "User already exists");
+        //             return;
+        //         }
+        //     }
+        // }
+
+        // create a selected node 
         DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) this.treeRoot.getLastSelectedPathComponent();
-        // check to see if the user already exists
-        if (selectedNode != null) {
-            Enumeration children = selectedNode.children();
-            while (children.hasMoreElements()) {
-                DefaultMutableTreeNode child = (DefaultMutableTreeNode) children.nextElement();
-                if (child.getUserObject().equals(userName)) {
-                    return;
-                }
-            }
+        // if the selected node is null, ask the user to select a node
+        if (selectedNode == null) {
+            JOptionPane.showMessageDialog(this.frame, "Please select a node");
+            return;
         }
-        // check to see if the user is already in the selected group
-        if (selectedNode != null) {
-            if (selectedNode.getUserObject().equals(userName)) {
-                return;
-            }
+        // if the selected node is a user, ask the user to select a group or root
+        if (selectedNode.getUserObject() instanceof User) {
+            JOptionPane.showMessageDialog(this.frame, "Cannot add a user to a user");
+            return;
+        }
+        // create a root reference
+        // DefaultMutableTreeNode root = (DefaultMutableTreeNode) this.treeRoot.getModel().getRoot();
+    
+
+
+        // create a user
+        User user = new User(userName);
+        // if the selected node is the root, add the user to the root
+        if (selectedNode == root) {
+            ((Group) root).addUser(user);
+            DefaultMutableTreeNode userNode = new DefaultMutableTreeNode(user);
+            root.add(userNode);
+            this.treeRoot.updateUI();
+            JOptionPane.showMessageDialog(this.frame, "User added successfully");
+            this.addUserTextArea.setText("");
+            // this.updateUserTotal();
+            return;
         }
 
-        if (selectedNode == null) {
-            root.add(user);
-        } else {
-            selectedNode.add(user);
+        // if the selected node is a group, check to see if user already exists in the group and if 
+        // not then add the user to the group, and update the tree
+        if (selectedNode.getUserObject() instanceof Group) {
+            if (((Group) selectedNode.getUserObject()).getUsers().contains(user)) {
+                JOptionPane.showMessageDialog(this.frame, "User already exists");
+                return;
+            }
+            ((Group) selectedNode.getUserObject()).addUser(user);
+            DefaultMutableTreeNode userNode = new DefaultMutableTreeNode(user);
+            selectedNode.add(userNode);
+            this.treeRoot.updateUI();
+            JOptionPane.showMessageDialog(this.frame, "User added successfully");
+            this.addUserTextArea.setText("");
+            // this.updateUserTotal();
+            return;
+
+
         }
-        this.addUserTextArea.setText("");
-        this.treeRoot.updateUI();
+
     }
-
-    public void addGroup() {
+    // when text is entered into the Group text area, it will create and add the selected node
+    // if the node is the root, it will add the user to the root
+    // if the node is a group, it will prompt the user to select the root
+    // if the selected node is a user, it will not add the user and prompt the user to select the root
+    // if the group already exists, it will not add the group and prompt the user to select a different name
+    // if the group is added, it will update the tree
+    // if the group is not added, it will display an error message
+    // if the group is added, it will display a success message
+    // if the group is added, it will clear the text area
+    // if the group is added, it will update the group total
+    //
+    public void addGroup(){
         String groupName = this.addGroupTextArea.getText();
-        // append the word group to the end of the group name
-        groupName = groupName + " (group)";
-
-        if (groupName.length() == 0) {
+        // check for empty string input
+        if (groupName == null || groupName.equals("")) {
+            JOptionPane.showMessageDialog(this.frame, "Please enter a group name");
             return;
         }
-        DefaultMutableTreeNode root = (DefaultMutableTreeNode) this.treeRoot.getModel().getRoot();
-        DefaultMutableTreeNode group = new DefaultMutableTreeNode(groupName);
+        // create a selected node 
         DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) this.treeRoot.getLastSelectedPathComponent();
-        // check to see is the selected node is a user if it is then return
-        if (selectedNode != null) {
-            if (selectedNode.isLeaf()) {
+        // if the selected node is null, ask the user to select a node
+        if (selectedNode == null) {
+            JOptionPane.showMessageDialog(this.frame, "Please select a node");
+            return;
+        }
+        // if the selected node is a user, ask the user to select a group or root
+        if (selectedNode.getUserObject() instanceof User) {
+            JOptionPane.showMessageDialog(this.frame, "Cannot add a group to a user");
+            return;
+        }
+        // if the selected node is a group, ask the user to select the root
+        if (selectedNode.getUserObject() instanceof Group) {
+            JOptionPane.showMessageDialog(this.frame, "Cannot add a group to a group");
+            return;
+        }
+        // create a root reference
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode) this.treeRoot.getModel().getRoot();
+        // if the selected node is the root, add the group to the root
+        if (selectedNode == root) {
+            // check to see if the group already exists in the tree
+            if (root.toString().contains(groupName)) {
+                JOptionPane.showMessageDialog(this.frame, "Group already exists");
                 return;
             }
-        }
-        // check to see if the group already exists
-        if (selectedNode != null) {
-            Enumeration children = selectedNode.children();
-            while (children.hasMoreElements()) {
-                DefaultMutableTreeNode child = (DefaultMutableTreeNode) children.nextElement();
-                if (child.getUserObject().equals(groupName)) {
-                    return;
-                }
-            }
-        }
-        // check to see if the group is already in the root
-        Enumeration children = root.children();
-        while (children.hasMoreElements()) {
-            DefaultMutableTreeNode child = (DefaultMutableTreeNode) children.nextElement();
-            if (child.getUserObject().equals(groupName)) {
-                return;
-            }
+            // create a group
+            Group group = new Group(groupName);
+            ((Group) root).addGroup(group);
+            DefaultMutableTreeNode groupNode = new DefaultMutableTreeNode(group);
+            root.add(groupNode);
+            this.treeRoot.updateUI();
+            JOptionPane.showMessageDialog(this.frame, "Group added successfully");
+            this.addGroupTextArea.setText("");
+            // this.updateGroupTotal();
+            return;
         }
 
-        if (selectedNode == null) {
-            root.add(group);
-        } else {
-            selectedNode.add(group);
-        }
-        // change the text area to empty
-        this.addGroupTextArea.setText("");
-        this.treeRoot.updateUI();
     }
 
     /**
@@ -327,18 +378,14 @@ public class AdminPanel implements ActionListener, ListSelectionListener {
         followButton.addActionListener(this);
         followButton.setActionCommand("follow");
 
+        // 
+
         // create the followers label
         JLabel followersLabel = new JLabel("Followers");
         followersLabel.setBounds(250, 35, 200, 20);
 
         followingListModel = new DefaultListModel();
 
-        // followingListModel.addElement("user1");
-        // followingListModel.addElement("user2");
-        // followingListModel.addElement("user3");
-        // followingListModel.addElement("user4");
-        // followingListModel.addElement("user5");
-        // followingListModel.addElement("user6");
 
         // create the following list and put it in a scroll pane
         followingList = new JList(followingListModel);
@@ -392,47 +439,40 @@ public class AdminPanel implements ActionListener, ListSelectionListener {
         userPanel.add(userNameLabel);
         userPanel.add(followUserLabel);
         userPanel.add(followUserTextArea);
-
         userPanel.add(followButton);
         userPanel.add(followersLabel);
         userPanel.add(followingScrollPane);
-        // userPanel.add(followingList);
         userPanel.add(messageLabel);
         userPanel.add(messageTextArea);
         userPanel.add(postMessageButton);
         userPanel.add(newsFeedLabel);
-        // userPanel.add(newsFeedList);
         userPanel.add(newsFeedScrollPane);
 
-        // TODO insert an image of a logo at the top right of the user panel
-        // ImageIcon logo = new ImageIcon("logo.png");
-        // JLabel logoLabel = new JLabel(logo);
-        // logoLabel.setBounds(200, 200, 150, 150);
 
     }
 
     // TODO create a method to add a user to the following list
-    // when the follow button is clicked, it will add the user to the following list
-
-    public void followUser() {
+    // when the follow button is clicked, it will add the user to the following list and attach the user to the selected user
+    // when the user is added to the following list, it will also add the user to the followers list of the user they are following 
+    public void followUser(){
         // get the user name from the text area
-        String followUser = this.followUserTextArea.getText();
-        // DefaultMutableTreeNode
-        // TODO check if the user exists
-        // if (this.userExists(followUser)) {
-        // // add the user to the following list
-        // this.followingList.add(followUser);
-        // } else {
-        // // display an error message
-        // JOptionPane.showMessageDialog(null, "User does not exist");
-        // }
-        // add the user to the following list
-        // this.followingList.add(followUser);
-
-        // this.followingList.add(followUser);
-        // change the text area to empty
-        this.followUserTextArea.setText("");
+        String userToFollow = followUserTextArea.getText();
+        // check if the user is in the tree
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode) this.treeRoot.getModel().getRoot();
+        if (root.toString().contains(userToFollow)){
+            // add the user to the following list
+            followingListModel.addElement(userToFollow);
+            // add the user to the followers list of the user they are following
+            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) this.treeRoot.getLastSelectedPathComponent();
+            selectedNode.add(new DefaultMutableTreeNode(userToFollow));
+            // update the tree
+            this.treeRoot.updateUI();
+        } else {
+            // if the user is not in the tree, display a message saying that the user is not in the tree
+            JOptionPane.showMessageDialog(null, "The user you are trying to follow is not a user");
+        }
     }
+
 
     @Override
     public void valueChanged(ListSelectionEvent e) {
@@ -440,16 +480,6 @@ public class AdminPanel implements ActionListener, ListSelectionListener {
 
     }
 
-    // // user exists method to check if the user exists
-    // public boolean userExists(String userName) {
-    // // get the user name from the text area
-    // String followUser = this.followUserTextArea.getText();
-    // // check if the user exists
-    // if (this.userList.contains(followUser)) {
-    // return true;
-    // } else {
-    // return false;
-    // }
-    // }
+
 
 }
